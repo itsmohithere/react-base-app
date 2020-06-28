@@ -1,12 +1,38 @@
-import { put, takeEvery } from 'redux-saga/effects';
+import { put, takeEvery, call } from 'redux-saga/effects';
+import Axios from '../axiosConfig/apiService';
 
-const delay = (ms)  =>  new Promise(res => setTimeout(res, ms));
+function* apiFetchPending(action, url) {
+  yield put({ type: `${action}_PENDING`, actualAction: action, payLoad: url });
+}
 
-export function* apiSaga( action ) {
-  yield delay(1000)
-  yield put({ type: 'changeName', payLoad: action.payLoad })
+function* apiFetchSuccessful(action, data) {
+  console.log({action, data})
+  yield put({ type: `${action}_FULLFILLED`, actualAction: action, payLoad: data });
+}
+
+function* apiFetchRejected(action, error) {
+  yield put({ type: `${action}_FAILED`, actualAction: action, payLoad: error })
+}
+
+export function* apiSaga( actionData ) {
+  // yield delay(2000)
+
+  const { url, action } = actionData.payLoad;
+
+  try {
+    yield* apiFetchPending(action, url);
+  
+    const apiCall = yield call(Axios.axiosGet, url);
+    console.log({apiCall});
+    yield* apiFetchSuccessful(action, apiCall);
+    
+  } catch (error) {
+    console.log(error);
+    yield* apiFetchRejected(action, error);
+  }
+  
 }
 
 export function* watchAction() {
-  yield takeEvery('PUSH_BUTTON', apiSaga)
+  yield takeEvery('API_CALL', apiSaga)
 }

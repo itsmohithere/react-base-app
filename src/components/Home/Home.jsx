@@ -1,21 +1,37 @@
 import React, { useEffect } from 'react';
-import logo from './logo.svg';
 import { LogoutButton } from '../../commonComponents';
 import { useSelector, useDispatch } from 'react-redux'
 
 import './Home.css';
-import { instance } from '../../axiosConfig/axiosInstance';
+import { apiInstance } from '../../axiosConfig/apiService';
+import { dashboardActions } from './dashboardReducer';
+// import { instance } from '../../axiosConfig/axiosInstance';
 
 function Home() {
   const state = useSelector(state => state);
+  console.log(state)
   const dispatch = useDispatch();
 
   useEffect(()  =>  {
-    console.log('instance', instance);
+    const payLoad = {
+      url: '/todos/1',
+      action: dashboardActions.TODO
+    }
+    dispatch({ type: 'API_CALL', payLoad })
+    // console.log(apiInstance.);
+    // apiInstance('/todos/1')
+    // .then(res => {
+    //   console.log(res);
+    // })
+    // .catch(err => {
+    //   console.log({err})
+    // })
+
+    // apiInstance.del  ete();
   },[]);
 
   const test = () => {
-    dispatch({type: 'PUSH_BUTTON', payLoad: 'Pop'});
+    // dispatch({type: 'PUSH_BUTTON', payLoad: 'Pop'});
     dispatch({type: 'updateMenuItem'})
   }
 
@@ -30,18 +46,7 @@ function Home() {
             );
           })
         }
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+
         <button onClick={test} >reduxTest</button>
         <LogoutButton className="logoutFooter" />
       </header>
